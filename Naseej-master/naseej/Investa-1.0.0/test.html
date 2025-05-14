@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multilingual Page</title>
+    <style>
+        /* Hide Google Translate UI elements */
+        .goog-te-banner-frame,
+        .goog-te-gadget {
+            display: none !important;
+        }
+
+        body {
+            top: 0 !important;
+            padding-top: 0 !important;
+        }
+
+        #google_translate_element {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <button id="langSwitchBtn" onclick="switchLanguage()" class="lang-switch-btn">
+            Arabic
+        </button>
+
+        <!-- Google Translate Element -->
+        <div id="google_translate_element"></div>
+
+        <p>Sample text to translate. This is an example paragraph that will be translated between English and Arabic.
+        </p>
+    </div>
+
+    <script type="text/javascript"
+        src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script>
+        let currentLang = 'en'; // Track the current language
+        let dropdownInitialized = false; // Track if dropdown is ready
+
+        // Initialize Google Translate
+        function googleTranslateElementInit() {
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                includedLanguages: 'en,ar',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
+
+            // Wait for the dropdown to become available
+            waitForDropdown();
+        }
+
+        // Wait until the dropdown is available
+        function waitForDropdown() {
+            const langSelect = document.querySelector('.goog-te-combo');
+            if (langSelect) {
+                dropdownInitialized = true;
+                console.log("Google Translate dropdown initialized.");
+            } else {
+                setTimeout(waitForDropdown, 500); // Retry every 500ms
+            }
+        }
+
+        // Function to switch languages
+        function switchLanguage() {
+            if (!dropdownInitialized) {
+                console.error("Google Translate dropdown not initialized yet. Please wait...");
+                return;
+            }
+
+            const langSelect = document.querySelector('.goog-te-combo');
+            if (langSelect) {
+                // Toggle the language
+                currentLang = currentLang === 'en' ? 'ar' : 'en';
+                langSelect.value = currentLang;
+                langSelect.dispatchEvent(new Event('change'));
+
+                // Update button text
+                updateButtonText();
+            }
+        }
+
+        // Update button text based on the current language
+        function updateButtonText() {
+            const btn = document.getElementById('langSwitchBtn');
+            btn.textContent = currentLang === 'en' ? 'Arabic' : 'English';
+        }
+    </script>
+</body>
+
+</html>
